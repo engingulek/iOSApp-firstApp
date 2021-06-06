@@ -110,6 +110,55 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
     }
     
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        
+        if editingStyle == .delete{
+            let deleteId = idArray[indexPath.row].uuidString;
+            
+            let appdelegate = UIApplication.shared.delegate as! AppDelegate;
+            let context = appdelegate.persistentContainer.viewContext;
+            
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "City")
+            fetchRequest.predicate = NSPredicate(format: "id = %@", deleteId)
+            fetchRequest.returnsObjectsAsFaults = false;
+            
+            do {
+                let results = try context.fetch(fetchRequest)
+                if results.count > 0{
+                    for result in results as! [NSManagedObject] {
+                        
+                        if let idDelete = result.value(forKey: "id") as? UUID{
+                            if idDelete == idArray[indexPath.row]{
+                                context.delete(result)
+                                
+                                idArray.remove(at: indexPath.row)
+                                nameArray.remove(at: indexPath.row)
+                                self.tableView.reloadData()
+                                do{
+                                    try context.save()
+                                }catch{
+                                    print("Error")
+                                }
+                                
+                            }
+                            
+                        }
+                    }
+                }
+            }catch{
+                
+            }
+            
+            
+            
+      
+        }
+       
+    }
+    
  
    
     

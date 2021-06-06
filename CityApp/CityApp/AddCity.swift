@@ -11,6 +11,7 @@ import CoreData
 class AddCity: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
     
+    @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var cityNameText: UITextField!
     @IBOutlet weak var countryNameText: UITextField!
@@ -22,6 +23,7 @@ class AddCity: UIViewController, UIImagePickerControllerDelegate & UINavigationC
         imageView.isUserInteractionEnabled=true;
         let imageGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(selectImage))
         view.addGestureRecognizer(imageGestureRecognizer)
+        saveButton.isEnabled=false;
         
     }
     
@@ -40,6 +42,7 @@ class AddCity: UIViewController, UIImagePickerControllerDelegate & UINavigationC
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         imageView.image = info[.originalImage] as? UIImage
+        saveButton.isEnabled=true
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -55,7 +58,8 @@ class AddCity: UIViewController, UIImagePickerControllerDelegate & UINavigationC
         newCity.setValue(UUID(), forKey: "id")
         let imageData = imageView.image?.jpegData(compressionQuality: 0.5)
         newCity.setValue(imageData, forKey: "image")
-        
+      
+           
         do{
             try context.save()
         }catch{
